@@ -21,13 +21,15 @@ if(!fs.existsSync(cbsPath)){
 console.log("正在讀取各字帖之 summary.json ……");
 const cbPaths = (await fsP.readdir(cbsPath, { withFileTypes: true }))
 	.filter(f => f.isDirectory())
-	.map(f => path.resolve(cbsPath, f.name));
+	.map(f => ({full: path.resolve(cbsPath, f.name), min: f.name}));
 
 const cbSummaries = await Promise.all(cbPaths.map(async cbPath => {
-	const summaryPath = path.resolve(cbPath, "summary.json");
+	const summaryPath = path.resolve(cbPath.full, "summary.json");
 	if(!fs.existsSync(summaryPath))
-		return console.log(`在字帖集合中，資料夾 ${cbPath} 缺少 summary.json，疑似不是字帖，因此遭略過。`);
-	return JSON.parse(await fsP.readFile(summaryPath, { encoding: "utf-8" }));
+		return console.log(`在字帖集合中，資料夾 ${cbPath.min} 缺少 summary.json，疑似不是字帖，因此遭略過。`);
+	const summary = JSON.parse(await fsP.readFile(summaryPath, { encoding: "utf-8" }));
+	summary.path = cbPath.min;
+	return summary;
 }));
 
 // 寫入 index.json 檔
