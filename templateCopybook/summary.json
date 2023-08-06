@@ -1,0 +1,42 @@
+{
+	"name": "本字帖名稱為何",
+	"description": "字帖說明，例如版權訊息。",
+	"children": [
+		{
+			"path": "exampleVar1",
+			"name": "範例一",
+			"formats": [
+				{
+					"path": "png",
+					"mimetype": "image/png",
+					"fnExt": ".png",
+					"description": "PNG 檔（透明、點陣、檔案大）"
+				},
+				{
+					"path": "svg",
+					"mimetype": "image/svg+xml",
+					"fnExt": ".svg",
+					"description": "SVG 檔（透明、向量、檔案大、清晰）"
+				},
+				{
+					"path": "gif",
+					"mimetype": "image/gif",
+					"fnExt": ".gif",
+					"description": "GIF 檔（透明、點陣、檔案小、模糊）"
+				}
+			]
+		},
+		{
+			"path": "exampleVar2",
+			"name": "範例二",
+			"formats": [
+				{
+					"path": "webp",
+					"mimetype": "image/webp",
+					"fnExt": ".webp",
+					"description": "WebP 檔（透明、點陣、檔案小）"
+				}
+			]
+		}
+	]
+}
