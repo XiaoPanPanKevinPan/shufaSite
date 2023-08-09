@@ -1,0 +1,27 @@
+@import "../general.css";
+
+body {
+	margin: 0;
+
+	display: flex;
+	flex-flow: column nowrap;
+	min-height: 100vh;
+}
+
+header {
+	flex: 0;
+	position: sticky;
+	top: 0;
+	padding: 0.5em;
+}
+
+main {
+	flex: 1;
+	padding: 0.5em;
+}
+
+footer {
+	flex: 0;
+	padding: 0.5em;
+}
+
