@@ -5,6 +5,7 @@
 		{
 			"path": "exampleVar1",
 			"name": "範例一",
+			"description": "".
 			"formats": [
 				{
 					"path": "png",
@@ -29,6 +30,7 @@
 		{
 			"path": "exampleVar2",
 			"name": "範例二",
+			"description": "".
 			"formats": [
 				{
 					"path": "webp",
