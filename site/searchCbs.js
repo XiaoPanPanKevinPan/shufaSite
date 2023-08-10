@@ -21,15 +21,15 @@ const getCbVarIndex = (() => {
 	 * In the index is an object of char and imageAmount pair.
 	 * @async
 	 * @function getCbVarIndex
-	 * @param {Object} cbVar
-	 * @param {Object} cbVar.cbPath - the path of the copybook which the variant belongs to
-	 * @param {stirng} cbVar.varPath - the path of the variant itself
+	 * @param {Object} options
+	 * @param {string} options.cbPath - the path of the copybook which the variant belongs to
+	 * @param {stirng} options.varPath - the path of the variant itself
 	 * @returns {Object} In each entries, the key is a character which the variant has files for it,
 	 *     and the value is how many files are there for the character.
 	 */
-	return async (cbVar) => {
-		if(cache[cbVar.cbPath]?.[cbVar.varPath])
-			return cache[cbVar.cbPath]?.[cbVar.varPath];
+	return async ({cbPath, varPaht}) => {
+		if(cache[cbPath]?.[varPath])
+			return cache[cbPath][varPath];
 
 		const index = await fetch(moduleBased(`./copybooks/${cbVar.cbPath}/${cbVar.varPath}/index.txt`))
 			.then(res => res.text())
@@ -76,13 +76,8 @@ const getImageNames = async (query, { cbPath, varPath, formatPath }) => {
 	// get the image amount for each char
 	const index = await getCbVarIndex({ cbPath, varPath, formatPath });
 
-	// get a list of supported formats
-	const format = cbsInfo
-		.find(cb => cb.path == cbPath)
-		.children
-		.find(cbVar => cbVar.path == varPath)
-		.formats
-		.find(fm => fm.path == formatPath);
+	// get the format
+	const format = cbsInfo[cbPath].variants[varPath].formats[formatPath];
 	if(!format) throw "options 似乎不正確，因為我們無法在 database 中找到相關的訊息。"
 
 	return chars.reduce((result, ch) => {

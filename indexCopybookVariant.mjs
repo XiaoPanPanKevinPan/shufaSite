@@ -25,16 +25,16 @@ if(!fs.existsSync(summaryPath)){
 
 // 讀取 summary.json
 const varPathInCb = path.parse(cbVarPath).name;
-let formats = JSON.parse(await fsP.readFile(summaryPath, { encoding: "utf8" }))
-	.children
-	.filter(c => c.path == varPathInCb)
-	?.[0]?.formats || undefined;
+const formats = await fsP.readFile(summaryPath, { encoding: "utf8" })
+	.then(summary => JSON.parse(summary))
+	.then(summary => summary.variants[varPathInCb])
+	.then(variant => variant?.formats);
 
-if(!formats || formats.length == 0){
+if(!formats || Object.keys(formats).length == 0){
 	console.log(`
 字帖資料夾中的 summary.json 可能有錯，導致無法讀取格式訊息。
 
-請確保 .children 陣列中，有物件的名稱是 ${varPathInCb}，
+請確保 .variants 物件中，有項目的名稱是 ${varPathInCb}，
 且該物件的 formats 並非空陣列。
 
 由於上述錯誤，本程式先行退出。
@@ -44,8 +44,8 @@ if(!formats || formats.length == 0){
 
 // 檢驗 summary.json 中，本變體的格式列表正確
 let allFormatsExist = true;
-formats.forEach(format => {
-	const formatExists = fs.existsSync(path.resolve(cbVarPath, format.path));
+Object.entries(formats).forEach(([fmPath, format]) => {
+	const formatExists = fs.existsSync(path.resolve(cbVarPath, fmPath));
 
 	if(formatExists) return;
 	allFormatsExist = false;
@@ -58,21 +58,24 @@ if(!allFormatsExist){
 }
 
 // 取得檔案列表
-formats = await Promise.all(formats.map(async format => {
-	const files = (await fsP.readdir(path.join(cbVarPath, format.path), { withFileTypes: true }))
-		.filter(f => f.isFile())
-		.filter(f => f.name.match(new RegExp(`^[0-9a-f]+_[0-9]+${format.fnExt}$`)));
-	return {
-		...format,
-		fns: files.map(f => f.name),
-		mainFns: files.map(f => f.name.replace(new RegExp(`${format.fnExt}$`), ""))
-	};
-}));
+const formatArray = await Promise.all(
+	Object.entries(formats).map(async ([fmPath, format]) => {
+		const files = (await fsP.readdir(path.join(cbVarPath, fmPath), { withFileTypes: true }))
+			.filter(f => f.isFile())
+			.filter(f => f.name.match(new RegExp(`^[0-9a-f]+_[0-9]+${format.fnExt}$`)));
+		return {
+			...format,
+			path: fmPath,
+			fns: files.map(f => f.name),
+			mainFns: files.map(f => f.name.replace(new RegExp(`${format.fnExt}$`), ""))
+		};
+	})
+);
 
 // 確認各格式中，檔案列表相同
 let allSame = true;
-if(formats.length >= 2){
-	const [mainFm, ...otherFms] = formats; // fm 就是 format
+if(Object.keys(formatArray).length >= 2){
+	const [mainFm, ...otherFms] = formatArray; // fm 就是 format
 	otherFms.forEach(fm => {
 		const onlyFmHas = fm.mainFns.filter(fn => !mainFm.mainFns.includes(fn));
 		const fmLacks = mainFm.mainFns.filter(fn => !fm.mainFns.includes(fn));
@@ -102,7 +105,7 @@ if(!allSame){
 console.log("已確認各格式的資料夾中，各字的字形數量相同。");
 
 // 把字形編號按字排進列表，稍後確認各字的字形編號是否連續
-const shapes = formats[0].mainFns.map(fn => fn.split("_"));
+const shapes = formatArray[0].mainFns.map(fn => fn.split("_"));
 	// 由於已確認各列表相同，所以只需要確認任一列表
 const chars = {};
 shapes.forEach(shape => {
