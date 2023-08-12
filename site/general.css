@@ -1,7 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap');
+
 * {
 	box-sizing: border-box;
 }
 
+body, :host {
+	--padding: 0.5rem;
+	font-family: "Noto Sans TC", sans-serif;
+}
+
 fieldset {
 	margin: 0;
+}
+
+.warningBlock {
+	background: hsl(0, 100%, 95%);
+	color: hsl(0, 100%, 45%);
+	padding: var(--padding);
+	border-radius: var(--padding);
+}
+
+a {
+	color: hsl(220, 60%, 55%);
+
+	text-decoration: underline 0.1em;
+}
+
+a:hover {
+	text-decoration: none;
 }
