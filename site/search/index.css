@@ -1,3 +1,91 @@
+main {
+	display: flex;
+	flex-flow: column nowrap;
+	gap: var(--padding);
+}
 
-/* For the search */
+main h2 {
+	margin: 0;
+}
 
+/* search options */
+#search {
+	display: flex;
+	flex-flow: column nowrap;
+
+	gap: 0.5em;
+}
+
+#searchInputLabel {
+	display: flex;
+	flex-flow: row wrap;
+}
+
+#searchInputLabel input {
+	flex: 1;
+	max-width: 100%;
+}
+
+#codebooks {
+	margin: 0;
+}
+
+#codebooks .title {
+	font-weight: bold;
+}
+
+details.codebook {
+	padding-left: 1em;
+}
+
+details.codebook summary {
+	list-style: disclosure-closed;
+}
+
+details[open].codebook summary {
+	list-style: disclosure-open;
+}
+
+details.codebook div.variants {
+	padding-left: 1em;
+}
+
+details.codebook div.variants ul.formats {
+	list-style: none;
+	margin: 0;
+	padding-left: 1em;
+
+	display: flex;
+	flex-flow: column nowrap;
+	gap: 0.5em;
+}
+
+details.codebook div.variants ul.formats li label{
+	display: flex;
+}
+
+/* search results */
+div#searchResults :is(h3, h4) {
+	margin: 0;
+}
+
+div#searchResults {
+	display: flex;
+	flex-flow: column nowrap;
+	gap: 1em;
+}
+
+div#searchResults div.char div.files {
+	display: flex;
+	flex-flow: row wrap;
+}
+
+div#searchResults div.char div.files label.file {
+	display: inline-block;
+	padding: 0.5em;
+	width: min(9em, 100vw);
+}
+
+div#searchResults div.char div.files label.file img {
+	width: 100%;
+}

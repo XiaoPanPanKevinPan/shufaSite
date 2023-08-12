@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html><head>
 	<meta charset="UTF-8" />
-	<title>書法資料庫</title>
-	<meta name="description" content="按字帖搜字、製作簡易字帖等" />
+	<title>搜尋 - 書法資料庫</title>
+	<meta name="description" content="搜尋資料庫" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<script type="module" src="./index.js"></script>
 	<script type="module" src="../basicPage/main.js"></script>
@@ -11,11 +11,11 @@
 	<main>
 		<h2>搜尋</h2>
 		<div id="search">
-			<label>文字：<input type="text" name="chars" placeholder="可以多嘗試各種異體字" /></label>
+			<label id="searchInputLabel">文字：<input type="text" name="chars" placeholder="建議多嘗試各種異體字" /></label>
 			<fieldset id="codebooks">
-				<legend>選擇字帖與格式
-					<button id="expandAllCbs">全部展開</button>
-					<button id="collapseAllCbs">全部收合</button>
+				<legend>字帖與格式
+					<button id="expandAllCbs">展開</button>
+					<button id="collapseAllCbs">收合</button>
 				</legend>
 			</fieldset>
 			<button id="submit">搜尋</button>
@@ -23,7 +23,7 @@
 		<div id="searchResults">
 		</div>
 	</main>
-	<noscript color="red">
-		本網站極度倚賴 JavaScript。請與瀏覽器內啟用 JavaScript，或改用支援 JavaScript 的瀏覽器。
+	<noscript>
+		<font color="red">本網站極度倚賴 JavaScript。請與瀏覽器內啟用 JavaScript，或改用支援 JavaScript 的瀏覽器。</font>
 	</noscript>
 </body></html>
