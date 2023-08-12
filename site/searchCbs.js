@@ -27,11 +27,11 @@ const getCbVarIndex = (() => {
 	 * @returns {Object} In each entries, the key is a character which the variant has files for it,
 	 *     and the value is how many files are there for the character.
 	 */
-	return async ({cbPath, varPaht}) => {
+	return async ({cbPath, varPath}) => {
 		if(cache[cbPath]?.[varPath])
 			return cache[cbPath][varPath];
 
-		const index = await fetch(moduleBased(`./copybooks/${cbVar.cbPath}/${cbVar.varPath}/index.txt`))
+		const index = await fetch(moduleBased(`./copybooks/${cbPath}/${varPath}/index.txt`))
 			.then(res => res.text())
 			.then(text => 
 				text.split('\n')
@@ -52,8 +52,8 @@ const getCbVarIndex = (() => {
 			);
 
 		// set cache
-		cache[cbVar.cbPath] ??= {};
-		cache[cbVar.cbPath][cbVar.varPath] = index;
+		cache[cbPath] ??= {};
+		cache[cbPath][varPath] = index;
 
 		return index;
 	}
@@ -61,36 +61,45 @@ const getCbVarIndex = (() => {
 
 /**
  * Get the image paths from a copybook variant.
- * @param {string} query - the chars to query for image paths
+ * @param {string|array} query - the chars to query for image paths
  * @param {Object} options - the copybook variants that images are stored
  * @param {string} options.cbPath - the path of the copybook which the variant belongs to
  * @param {stirng} options.varPath - the path of the variant itself
  * @param {stirng} options.formatPath - the mimetype of the image files
  * @returns {Object} In each entries, the key {string} is an char from the `query`, and value 
- *     is an array of filenames {string} of the images.
+ *     is an Object with two properties: filenames {string} is the file name of the image, 
+ *     and url {string} is the absolute link to the image.
  */
 
-const getImageNames = async (query, { cbPath, varPath, formatPath }) => {
-	const chars = [...query];
+const search = async (query, { cbPath, varPath, formatPath }) => {
+	const chars = [...query]; // force strings and arrays become arrays
+		// uniquify later
 
 	// get the image amount for each char
 	const index = await getCbVarIndex({ cbPath, varPath, formatPath });
 
 	// get the format
-	const format = cbsInfo[cbPath].variants[varPath].formats[formatPath];
+	const format = cbsInfo?.[cbPath]?.variants?.[varPath]?.formats?.[formatPath];
 	if(!format) throw "options 似乎不正確，因為我們無法在 database 中找到相關的訊息。"
 
 	return chars.reduce((result, ch) => {
 		const len = index[ch] || 0;
-		result[ch] ??= [];
+		if(result[ch] instanceof Array)
+			return result; // the result exists. Early return to uniquify the list.
+		result[ch] = [];
 		for(let i = 0; i < len; i++)
-			result[ch].push(`${ch.codePointAt().toString(16)}_${i}${format.fnExt}`)
+			result[ch].push({
+				ch,
+				chId: i,
+				url: moduleBased(`./copybooks/${cbPath}/${varPath}/${formatPath}/${ch.codePointAt().toString(16)}_${i}${format.fnExt}`),
+				filename: `${ch.codePointAt().toString(16)}_${i}${format.fnExt}`
+			});
 		return result;
 	}, {})
-}
+};
 
 export {
 	cbsInfo,
 	getCbVarIndex,
-	getImageNames
+	search
 };
