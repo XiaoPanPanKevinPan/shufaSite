@@ -13,9 +13,9 @@ const pageBased = (str) => str;
 
 const headerHtml = `
 <div>
-	<h1><a href="/">書法資料庫</a></h1>
+	<h1><a href="${moduleBased("../")}">書法資料庫</a></h1>
 	<div id="menu">
-		<a href="/search">搜尋</a>
+		<a href="${moduleBased("../search/")}">搜尋</a>
 	</div>
 </div>
 <style> @import "${moduleBased("../general.css")}" </style>
